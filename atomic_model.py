@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 
 # --- Element data ---
 elements = {
@@ -73,12 +74,14 @@ if page == "Atomic Model & Reaction":
         releasing electrical energy.
         """)
 
-# --- Page 2: Physical Properties ---
+# --- Page 2: Physical Properties as a Table ---
 elif page == "Physical Properties":
     st.subheader(f"Physical Properties of {element_name}")
+    table_data = []
     for prop, (value, description) in element["physical"].items():
-        st.write(f"**{prop}:** {value}")
-        st.write(f"*Description:* {description}\n")
+        table_data.append({"Property": prop, "Value": value, "Description": description})
+    df = pd.DataFrame(table_data)
+    st.table(df)
 
 # --- Page 3: Nuclear Info & E-waste ---
 elif page == "Nuclear Info & E-waste":
