@@ -24,7 +24,7 @@ st.subheader("Chemical Formula (During Discharge)")
 st.write(element["formula"])
 
 # --- Show image ---
-st.image(element["image"], caption=element_name, use_column_width=True)
+st.image(element["image"], caption=element_name, use_container_width=True)
 
 # --- Chemical reaction explanation ---
 st.subheader("Battery Chemistry Explanation")
