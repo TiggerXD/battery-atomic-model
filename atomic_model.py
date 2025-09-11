@@ -6,26 +6,16 @@ st.set_page_config(page_title="Battery Elements Explorer", layout="wide")
 # ---------------- CSS ----------------
 st.markdown("""
 <style>
-/* Sidebar background and text */
+/* Sidebar background */
 section[data-testid="stSidebar"] {
     background-color: #e9ecef !important;
     color: #212529 !important;
 }
-section[data-testid="stSidebar"] * {
-    color: #212529 !important;
-    font-weight: 500;
-}
 
-/* Make selectbox text dark */
+/* Dropdown text color (element selection) */
 div[role="combobox"] > div > div > span {
     color: #212529 !important;
     font-weight: 500;
-}
-
-/* Hover effect for selectbox items */
-div[role="option"] {
-    color: #212529 !important;
-    background-color: #f8f9fa !important;
 }
 
 /* Main page styling */
@@ -60,19 +50,9 @@ body {
     font-weight: bold;
     color: #084298;
 }
-.embed-container {
-    position: relative;
-    padding-bottom: 75%;
-    height: 0;
-    overflow: hidden;
-    max-width: 100%;
-}
-.embed-container iframe {
-    position: absolute;
-    top:0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+.gif-container {
+    text-align: center;
+    margin: 20px 0;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -96,7 +76,7 @@ element_data = {
         "protons": 3,
         "neutrons": 4,
         "electrons": 3,
-        "embed": "https://phet.colorado.edu/sims/html/build-an-atom/latest/build-an-atom_en.html"
+        "gif": "lithium.gif"  # replace with your GIF filename
     },
     "Lead (Pb)": {
         "atomic_number": 82,
@@ -110,7 +90,7 @@ element_data = {
         "protons": 82,
         "neutrons": 125,
         "electrons": 82,
-        "embed": "https://phet.colorado.edu/sims/html/build-an-atom/latest/build-an-atom_en.html"
+        "gif": "lead.gif"  # replace with your GIF filename
     }
 }
 
@@ -121,18 +101,16 @@ if page == "🏠 Home":
     st.write(
         """
         Welcome to the **Battery Elements Explorer**! 🚀  
-        Learn about the atomic structures of Lithium and Lead, key players in modern battery technology.  
+        Learn about the atomic structures of Lithium and Lead, key players in modern battery technology.
         """
     )
 
     st.markdown(f"### 🔹 {atom_choice}")
 
-    # Embed interactive atom
-    st.markdown(f"""
-    <div class="embed-container">
-        <iframe src="{element_data[atom_choice]['embed']}" width="800" height="600" scrolling="no" allowfullscreen></iframe>
-    </div>
-    """, unsafe_allow_html=True)
+    # Show GIF
+    st.markdown('<div class="gif-container">', unsafe_allow_html=True)
+    st.image(element_data[atom_choice]['gif'], caption=f"{atom_choice} Atom Model (Animated)", use_column_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
     formula_class = "highlight-li" if atom_choice == "Lithium (Li)" else "highlight-pb"
     st.markdown(f"**Chemical Formula:** <span class='{formula_class}'>{element_data[atom_choice]['formula']}</span>", unsafe_allow_html=True)
