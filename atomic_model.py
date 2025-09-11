@@ -60,6 +60,20 @@ body {
     font-weight: bold;
     color: #084298;
 }
+.embed-container {
+    position: relative;
+    padding-bottom: 75%;
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+}
+.embed-container iframe {
+    position: absolute;
+    top:0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -82,7 +96,7 @@ element_data = {
         "protons": 3,
         "neutrons": 4,
         "electrons": 3,
-        "gif": "lithium.gif"
+        "embed": "https://phet.colorado.edu/sims/html/build-an-atom/latest/build-an-atom_en.html"
     },
     "Lead (Pb)": {
         "atomic_number": 82,
@@ -96,7 +110,7 @@ element_data = {
         "protons": 82,
         "neutrons": 125,
         "electrons": 82,
-        "gif": "lead.gif"
+        "embed": "https://phet.colorado.edu/sims/html/build-an-atom/latest/build-an-atom_en.html"
     }
 }
 
@@ -113,9 +127,13 @@ if page == "🏠 Home":
 
     st.markdown(f"### 🔹 {atom_choice}")
 
-    # Show GIF
-    st.image(element_data[atom_choice]["gif"], use_container_width=True)
-    
+    # Embed interactive atom
+    st.markdown(f"""
+    <div class="embed-container">
+        <iframe src="{element_data[atom_choice]['embed']}" width="800" height="600" scrolling="no" allowfullscreen></iframe>
+    </div>
+    """, unsafe_allow_html=True)
+
     formula_class = "highlight-li" if atom_choice == "Lithium (Li)" else "highlight-pb"
     st.markdown(f"**Chemical Formula:** <span class='{formula_class}'>{element_data[atom_choice]['formula']}</span>", unsafe_allow_html=True)
 
