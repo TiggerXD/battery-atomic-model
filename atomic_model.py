@@ -5,9 +5,28 @@ import pandas as pd
 
 # --- Page Config ---
 st.set_page_config(page_title="Battery Elements Explorer", layout="wide")
-st.title("🔬 Battery Elements Explorer")
+st.markdown("<h1 style='text-align:center;color:#00ffff'>🔬 Battery Elements Explorer</h1>", unsafe_allow_html=True)
 
 # --- Sidebar ---
+st.markdown("""
+    <style>
+    .sidebar .sidebar-content {
+        background: linear-gradient(#111111,#333333);
+        border-radius: 15px;
+        padding: 15px;
+    }
+    .sidebar .sidebar-content h2 {
+        color: #00ffff;
+    }
+    .stRadio>div>div, .stSelectbox>div>div {
+        border-radius: 10px;
+        background-color: #222222;
+        color: #00ffff;
+        padding: 5px;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 st.sidebar.title("⚡ Explore Elements")
 element = st.sidebar.selectbox("Select Element", ["Lithium (Li)", "Lead (Pb)"])
 page = st.sidebar.radio("Navigate", ["⚛️ Atomic Model", "📊 Physical Properties", "☢️ Nuclear & E-Waste"])
@@ -43,55 +62,44 @@ element_data = {
         "e_waste": "☣️ Highly toxic, unsafe recycling pollutes soil & water."
     }
 }
-
 data = element_data[element]
 
 # --- Page 1: Atomic Model ---
 if page == "⚛️ Atomic Model":
-    st.subheader(f"⚛️ 3D Animated Atomic Model of {element}")
-    st.markdown(f"**Discharge Formula:** `{data['formula']}`")
+    st.markdown(f"<h2 style='color:#00ff00'>⚛️ Atomic Model of {element}</h2>", unsafe_allow_html=True)
+    st.markdown(f"<b style='color:#ffff00'>Discharge Formula:</b> <span style='color:#ffffff'>{data['formula']}</span>", unsafe_allow_html=True)
 
     shells = data['electrons']
-    radii = np.linspace(10, 30, len(shells))  # radius per shell
-    n_frames = 60  # number of animation frames
+    radii = np.linspace(10, 30, len(shells))
+    n_frames = 60
     frames = []
 
-    # --- Build animation frames ---
     angles = np.linspace(0, 2*np.pi, n_frames)
     for t in angles:
         frame_data = []
         # Nucleus
         frame_data.append(go.Scatter3d(
-            x=[0]*data['protons'],
-            y=[0]*data['protons'],
-            z=[0]*data['protons'],
-            mode='markers',
-            marker=dict(size=8, color='red'),
-            name='Protons'
+            x=[0]*data['protons'], y=[0]*data['protons'], z=[0]*data['protons'],
+            mode='markers', marker=dict(size=8,color='red',opacity=0.9), name='Protons'
         ))
         frame_data.append(go.Scatter3d(
-            x=[0]*data['neutrons'],
-            y=[0]*data['neutrons'],
-            z=[0]*data['neutrons'],
-            mode='markers',
-            marker=dict(size=8, color='blue'),
-            name='Neutrons'
+            x=[0]*data['neutrons'], y=[0]*data['neutrons'], z=[0]*data['neutrons'],
+            mode='markers', marker=dict(size=8,color='blue',opacity=0.9), name='Neutrons'
         ))
         # Electrons
         for i, num in enumerate(shells):
-            x = []
-            y = []
-            z = []
-            tilt = np.pi/8*(i+1)  # tilt per shell for 3D effect
+            x, y, z = [], [], []
+            tilt = np.pi/8*(i+1)
             for j in range(num):
                 angle = t + j*2*np.pi/num
                 x.append(radii[i]*np.cos(angle))
                 y.append(radii[i]*np.sin(angle)*np.cos(tilt))
                 z.append(radii[i]*np.sin(angle)*np.sin(tilt))
+            # faint orbit lines
             frame_data.append(go.Scatter3d(
-                x=x, y=y, z=z,
-                mode='markers',
-                marker=dict(size=4, color='yellow'),
+                x=x, y=y, z=z, mode='markers+lines',
+                line=dict(color='yellow', width=1, dash='dot'),
+                marker=dict(size=4,color='yellow'),
                 name=f'Shell {i+1}'
             ))
         frames.append(go.Frame(data=frame_data))
@@ -102,27 +110,31 @@ if page == "⚛️ Atomic Model":
     )
 
     fig.update_layout(
+        paper_bgcolor="#111111",
+        plot_bgcolor="#111111",
+        font_color="#00ffff",
         updatemenus=[dict(
             type="buttons",
             buttons=[dict(label="Play",
                           method="animate",
-                          args=[None, {"frame": {"duration": 80, "redraw": True},
-                                       "fromcurrent": True, "transition": {"duration": 0}}])],
+                          args=[None, {"frame":{"duration":80,"redraw":True},
+                                       "fromcurrent":True, "transition":{"duration":0}}])],
             showactive=True
         )],
         scene=dict(
             xaxis=dict(showbackground=False, visible=False),
             yaxis=dict(showbackground=False, visible=False),
-            zaxis=dict(showbackground=False, visible=False)
+            zaxis=dict(showbackground=False, visible=False),
+            bgcolor="#111111"
         ),
-        margin=dict(l=0, r=0, t=0, b=0)
+        margin=dict(l=0,r=0,t=0,b=0)
     )
 
     st.plotly_chart(fig, use_container_width=True)
 
 # --- Page 2: Physical Properties ---
 elif page == "📊 Physical Properties":
-    st.subheader(f"📊 Physical Properties of {element}")
+    st.markdown(f"<h2 style='color:#00ff00'>📊 Physical Properties of {element}</h2>", unsafe_allow_html=True)
     properties = {
         "Property": ["Boiling Point", "Melting Point", "Heat Capacity", "Electrical Conductivity",
                      "Periodic Table Group", "Protons", "Neutrons", "Electrons"],
@@ -130,12 +142,17 @@ elif page == "📊 Physical Properties":
                   data['group'], data['protons'], data['neutrons'], sum(shells)]
     }
     df = pd.DataFrame(properties)
-    st.table(df)
+    # Highlight important properties
+    def highlight_props(x):
+        color = 'background-color: #222222; color:#00ffff'
+        important = ['Boiling Point','Melting Point','Electrical Conductivity','Protons','Neutrons','Electrons']
+        return [f'background-color:#444444; color:#ffff00' if v in important else color for v in x]
+    st.dataframe(df.style.apply(highlight_props, axis=0))
 
 # --- Page 3: Nuclear & E-Waste ---
 elif page == "☢️ Nuclear & E-Waste":
-    st.subheader(f"☢️ Nuclear Info & Environmental Impact of {element}")
-    st.markdown(f"- **Symbol:** {data['nuclear_symbol']}")
-    st.markdown(f"- **Atomic Number:** {data['atomic_number']}")
-    st.markdown(f"- **E-Waste Effect:** {data['e_waste']}")
+    st.markdown(f"<h2 style='color:#00ff00'>☢️ Nuclear Info & Environmental Impact of {element}</h2>", unsafe_allow_html=True)
+    st.markdown(f"<b style='color:#ffff00'>Symbol:</b> <span style='color:#ffffff'>{data['nuclear_symbol']}</span>", unsafe_allow_html=True)
+    st.markdown(f"<b style='color:#ffff00'>Atomic Number:</b> <span style='color:#ffffff'>{data['atomic_number']}</span>", unsafe_allow_html=True)
+    st.markdown(f"<b style='color:#ff3333'>E-Waste Effect:</b> <span style='color:#ffffff'>{data['e_waste']}</span>", unsafe_allow_html=True)
     st.success("✅ Always recycle batteries responsibly!")
