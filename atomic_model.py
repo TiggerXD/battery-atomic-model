@@ -10,6 +10,54 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# ---------------- CUSTOM STYLING ----------------
+st.markdown("""
+    <style>
+    /* Global background */
+    .stApp {
+        background: linear-gradient(135deg, #f0f9ff, #cbebff, #a6e3e9);
+        font-family: 'Segoe UI', sans-serif;
+    }
+    /* Sidebar styling */
+    section[data-testid="stSidebar"] {
+        background: #1e3a8a;
+        color: white;
+    }
+    section[data-testid="stSidebar"] .stRadio > label {
+        color: white;
+        font-weight: 600;
+    }
+    section[data-testid="stSidebar"] h1, h2, h3 {
+        color: white;
+    }
+    /* Titles */
+    h1 {
+        color: #0f172a;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    h2, h3 {
+        color: #1e293b;
+    }
+    /* Tables */
+    .stTable {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+    }
+    /* Markdown text */
+    p, li {
+        font-size: 1.05rem;
+        line-height: 1.6;
+    }
+    /* Buttons and selectbox */
+    .stSelectbox div {
+        background: white;
+        border-radius: 8px;
+        padding: 6px;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 # ---------------- SIDEBAR ----------------
 st.sidebar.title("🔍 Navigation")
 page = st.sidebar.radio(
@@ -21,9 +69,9 @@ page = st.sidebar.radio(
 if page == "⚛️ Atomic Models":
     st.title("⚛️ Atomic Models of Battery Elements")
 
-    st.write("Explore the 3D atomic structures of **Lithium** and **Lead**, "
-             "two key elements used in electronic batteries. "
-             "Use your mouse to rotate, zoom, and explore the atomic models!")
+    st.write("Explore the **3D atomic structures** of Lithium and Lead, "
+             "two essential elements in electronic batteries. "
+             "🔄 Rotate, zoom, and inspect the atoms interactively!")
 
     elements = {
         "Lithium": {
@@ -36,10 +84,10 @@ if page == "⚛️ Atomic Models":
         }
     }
 
-    choice = st.selectbox("Choose an element:", list(elements.keys()))
+    choice = st.selectbox("🔎 Choose an element:", list(elements.keys()))
 
     st.subheader(f"⚗️ Discharge Formula for {choice}")
-    st.markdown(f"**{elements[choice]['formula']}**")
+    st.markdown(f"<div style='padding:10px; background:white; border-radius:10px; box-shadow:0px 3px 8px rgba(0,0,0,0.1); font-size:1.1rem;'><b>{elements[choice]['formula']}</b></div>", unsafe_allow_html=True)
 
     st.subheader(f"🧩 3D Atomic Model of {choice}")
     components.iframe(elements[choice]["embed"], height=600)
@@ -47,8 +95,7 @@ if page == "⚛️ Atomic Models":
 # ---------------- PAGE 2: Physical Properties ----------------
 elif page == "📊 Physical Properties":
     st.title("📊 Physical Properties of Lithium & Lead")
-    st.write("Here are some important physical properties of **Lithium (Li)** and **Lead (Pb)** "
-             "that explain their different roles in batteries.")
+    st.write("Here’s a comparison of important physical properties of **Lithium (Li)** and **Lead (Pb)**.")
 
     data = {
         "Property": [
@@ -65,7 +112,7 @@ elif page == "📊 Physical Properties":
             "1342", "180.5", "3.58", "Good conductor", "Alkali Metal (Group 1)", "3", "4", "3"
         ],
         "Lead (Pb)": [
-            "1749", "327.5", "0.13", "Poor conductor (compared to Li)", "Post-Transition Metal (Group 14)", "82", "125", "82"
+            "1749", "327.5", "0.13", "Poor conductor", "Post-Transition Metal (Group 14)", "82", "125", "82"
         ]
     }
 
