@@ -1,131 +1,79 @@
 import streamlit as st
 import plotly.graph_objects as go
 import numpy as np
-import pandas as pd
+import time
 
-st.set_page_config(layout="wide", page_title="Battery Elements Explorer")
-st.title("🔬 Battery Elements Explorer")
+st.set_page_config(layout="wide")
+st.title("⚛️ 3D Atomic Model - Animated & Locked Nucleus")
 
-# --- Sidebar ---
-st.sidebar.title("⚡ Explore Elements")
-element = st.sidebar.selectbox("Choose Element", ["Lithium (Li)", "Lead (Pb)"])
-page = st.sidebar.radio("Navigate", ["⚛️ Atomic Model", "📊 Physical Properties", "☢️ Nuclear & E-Waste"])
+# Sidebar
+element = st.sidebar.selectbox("Select Element", ["Lithium (Li)", "Lead (Pb)"])
 
-# --- Element Data ---
-element_data = {
-    "Lithium (Li)": {
-        "formula": "LiC6 + CoO2 → C6 + LiCoO2",
-        "protons": 3,
-        "neutrons": 4,
-        "electrons": [2, 1],
-        "boiling": "1342°C",
-        "melting": "180.5°C",
-        "heat_capacity": "3.58 J/g·K",
-        "conductivity": "✅ Good conductor",
-        "group": "Alkali Metal (Group 1)",
-        "nuclear_symbol": "Li",
-        "atomic_number": 3,
-        "e_waste": "⚠️ Can leak toxic electrolytes, high water usage in mining."
-    },
-    "Lead (Pb)": {
-        "formula": "Pb + PbO2 + 2H2SO4 → 2PbSO4 + 2H2O",
-        "protons": 82,
-        "neutrons": 125,
-        "electrons": [2, 8, 18, 32, 18, 4],
-        "boiling": "1749°C",
-        "melting": "327.5°C",
-        "heat_capacity": "0.13 J/g·K",
-        "conductivity": "⚠️ Poor conductor",
-        "group": "Post-Transition Metal (Group 14)",
-        "nuclear_symbol": "Pb",
-        "atomic_number": 82,
-        "e_waste": "☣️ Highly toxic, unsafe recycling pollutes soil & water."
-    }
+# Element info
+elements = {
+    "Lithium (Li)": {"protons": 3, "neutrons": 4, "electrons": [2, 1]},
+    "Lead (Pb)": {"protons": 82, "neutrons": 125, "electrons": [2, 8, 18, 32, 18, 4]}
 }
 
-data = element_data[element]
+info = elements[element]
+shells = info["electrons"]
+radii = np.linspace(10, 30, len(shells))
 
-# --- Page 1: Atomic Model ---
-if page == "⚛️ Atomic Model":
-    st.subheader(f"⚛️ 3D Atomic Model of {element}")
-    st.markdown(f"**Discharge Formula:** `{data['formula']}`")
-    
-    shells = data['electrons']
-    radii = np.linspace(10, 30, len(shells))
-    
-    # --- Build frames for animation ---
-    frames = []
-    angles = np.linspace(0, 2*np.pi, 50)
-    
-    for a in angles:
-        frame_data = []
-        # Nucleus
-        frame_data.append(go.Scatter3d(
-            x=[0]*data['protons'],
-            y=[0]*data['protons'],
-            z=[0]*data['protons'],
-            mode='markers',
-            marker=dict(size=8, color='red'),
-            name='Protons'
-        ))
-        frame_data.append(go.Scatter3d(
-            x=[0]*data['neutrons'],
-            y=[0]*data['neutrons'],
-            z=[0]*data['neutrons'],
-            mode='markers',
-            marker=dict(size=8, color='blue'),
-            name='Neutrons'
-        ))
-        # Electrons
-        for i, num in enumerate(shells):
-            angles_e = np.linspace(0, 2*np.pi, num, endpoint=False) + a*(i+1)
-            x = radii[i]*np.cos(angles_e)
-            y = radii[i]*np.sin(angles_e)
-            z = np.zeros_like(x)
-            frame_data.append(go.Scatter3d(
-                x=x, y=y, z=z,
-                mode='markers',
-                marker=dict(size=4, color='yellow'),
-                name=f'Shell {i+1}'
-            ))
-        frames.append(go.Frame(data=frame_data))
-    
-    fig = go.Figure(
-        data=frames[0].data,
-        frames=frames
+# --- Nucleus coordinates (locked) ---
+nucleus_protons = np.zeros((info["protons"], 3))
+nucleus_neutrons = np.zeros((info["neutrons"], 3))
+
+# --- Create 3D figure ---
+fig = go.Figure()
+
+# Protons
+fig.add_trace(go.Scatter3d(
+    x=nucleus_protons[:,0], y=nucleus_protons[:,1], z=nucleus_protons[:,2],
+    mode='markers', marker=dict(size=8, color='red'), name='Protons'
+))
+
+# Neutrons
+fig.add_trace(go.Scatter3d(
+    x=nucleus_neutrons[:,0], y=nucleus_neutrons[:,1], z=nucleus_neutrons[:,2],
+    mode='markers', marker=dict(size=8, color='blue'), name='Neutrons'
+))
+
+# Electron traces placeholders
+electron_traces = []
+for i, num in enumerate(shells):
+    angles = np.linspace(0, 2*np.pi, num, endpoint=False)
+    x = radii[i] * np.cos(angles)
+    y = radii[i] * np.sin(angles)
+    z = np.zeros_like(x)
+    trace = go.Scatter3d(
+        x=x, y=y, z=z, mode='markers', marker=dict(size=4, color='yellow'), name=f'Shell {i+1}'
     )
-    
-    fig.update_layout(
-        updatemenus=[dict(type="buttons",
-                          buttons=[dict(label="Play",
-                                        method="animate",
-                                        args=[None, {"frame": {"duration": 100, "redraw": True}, 
-                                                     "fromcurrent": True, "transition": {"duration": 0}}])],
-                          showactive=True)],
-        scene=dict(xaxis=dict(showbackground=False, visible=False),
-                   yaxis=dict(showbackground=False, visible=False),
-                   zaxis=dict(showbackground=False, visible=False)),
-        margin=dict(l=0, r=0, t=0, b=0)
-    )
-    
-    st.plotly_chart(fig, use_container_width=True)
+    electron_traces.append(trace)
+    fig.add_trace(trace)
 
-# --- Page 2: Physical Properties ---
-elif page == "📊 Physical Properties":
-    st.subheader(f"📊 Physical Properties of {element}")
-    properties = {
-        "Property": ["Boiling Point", "Melting Point", "Heat Capacity", "Electrical Conductivity",
-                     "Periodic Table Group", "Protons", "Neutrons", "Electrons"],
-        element: [data['boiling'], data['melting'], data['heat_capacity'], data['conductivity'],
-                  data['group'], data['protons'], data['neutrons'], sum(shells)]
-    }
-    df = pd.DataFrame(properties)
-    st.table(df)
+fig.update_layout(
+    scene=dict(
+        xaxis=dict(showbackground=False, visible=False),
+        yaxis=dict(showbackground=False, visible=False),
+        zaxis=dict(showbackground=False, visible=False)
+    ),
+    margin=dict(l=0, r=0, t=0, b=0)
+)
 
-# --- Page 3: Nuclear & E-Waste ---
-elif page == "☢️ Nuclear & E-Waste":
-    st.subheader(f"☢️ Nuclear Info & Environmental Impact of {element}")
-    st.markdown(f"- **Symbol:** {data['nuclear_symbol']}")
-    st.markdown(f"- **Atomic Number:** {data['atomic_number']}")
-    st.markdown(f"- **E-Waste Effect:** {data['e_waste']}")
-    st.success("✅ Always recycle batteries responsibly!")
+plotly_chart = st.plotly_chart(fig, use_container_width=True)
+
+# --- Animate electrons ---
+angle = 0
+while True:
+    angle += 0.05
+    for i, num in enumerate(shells):
+        theta = np.linspace(0, 2*np.pi, num, endpoint=False) + angle*(i+1)
+        phi = np.linspace(0, np.pi, num)  # give slight tilt for 3D orbit
+        x = radii[i]*np.cos(theta)
+        y = radii[i]*np.sin(theta)*np.cos(theta)  # 3D twist
+        z = radii[i]*np.sin(theta)*np.sin(theta)
+        fig.data[2+i].x = x
+        fig.data[2+i].y = y
+        fig.data[2+i].z = z
+    plotly_chart.plotly_chart(fig, use_container_width=True)
+    time.sleep(0.05)
