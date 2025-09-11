@@ -51,24 +51,21 @@ if page == "⚛️ Atomic Model":
     st.markdown(f"<b style='color:#ffff00'>Discharge Formula:</b> <span style='color:#ffffff'>{data['formula']}</span>", unsafe_allow_html=True)
 
     shells = data['electrons']
-    radii = np.linspace(15, 40, len(shells))  # bigger radii for orbits
+    radii = np.linspace(15, 40, len(shells))  # orbit radii
     n_frames = 60
     frames = []
 
-    # Nucleus positions
-    proton_positions = np.random.uniform(-2,2,(data['protons'],3))
-
-    # Neutrons stick to random protons
-    neutron_positions = np.zeros((data['neutrons'],3))
-    for i in range(data['neutrons']):
-        p_idx = np.random.randint(0, data['protons'])
-        neutron_positions[i] = proton_positions[p_idx] + np.random.uniform(-0.5,0.5,3)
+    # --- Nucleus (centralized) ---
+    # Cluster protons around center (0,0,0)
+    proton_positions = np.random.uniform(-1,1,(data['protons'],3))
+    # Cluster neutrons around center too
+    neutron_positions = np.random.uniform(-1,1,(data['neutrons'],3))
 
     angles = np.linspace(0, 2*np.pi, n_frames)
     for t in angles:
         frame_data = []
 
-        # Protons
+        # Protons (red)
         frame_data.append(go.Scatter3d(
             x=proton_positions[:,0],
             y=proton_positions[:,1],
@@ -78,7 +75,7 @@ if page == "⚛️ Atomic Model":
             name='Protons'
         ))
 
-        # Neutrons
+        # Neutrons (pink)
         frame_data.append(go.Scatter3d(
             x=neutron_positions[:,0],
             y=neutron_positions[:,1],
@@ -88,7 +85,7 @@ if page == "⚛️ Atomic Model":
             name='Neutrons'
         ))
 
-        # Electrons
+        # Electrons orbiting nucleus center
         for i, num in enumerate(shells):
             x, y, z = [], [], []
             tilt = np.pi/8*(i+1)
@@ -104,6 +101,7 @@ if page == "⚛️ Atomic Model":
                 marker=dict(size=7,color='yellow',opacity=0.9),
                 name=f'Shell {i+1}'
             ))
+
         frames.append(go.Frame(data=frame_data))
 
     fig = go.Figure(data=frames[0].data, frames=frames)
