@@ -6,11 +6,7 @@ st.set_page_config(page_title="Battery Elements Explorer", layout="wide")
 # ---------------- CSS ----------------
 st.markdown("""
 <style>
-/* Sidebar background */
-section[data-testid="stSidebar"] {
-    background-color: #e9ecef !important;
-    color: #212529 !important;
-}
+/* Sidebar remains default colors, nothing changes here */
 
 /* Dropdown text color (element selection) */
 div[role="combobox"] > div > div > span {
@@ -76,7 +72,7 @@ element_data = {
         "protons": 3,
         "neutrons": 4,
         "electrons": 3,
-        "gif": "lithium.gif"  # replace with your GIF filename
+        "gif": "lithium.gif"
     },
     "Lead (Pb)": {
         "atomic_number": 82,
@@ -90,7 +86,7 @@ element_data = {
         "protons": 82,
         "neutrons": 125,
         "electrons": 82,
-        "gif": "lead.gif"  # replace with your GIF filename
+        "gif": "lead.gif"
     }
 }
 
