@@ -3,12 +3,13 @@ import plotly.graph_objects as go
 import numpy as np
 import pandas as pd
 
-st.set_page_config(layout="wide", page_title="Battery Elements Explorer")
+# --- Page Config ---
+st.set_page_config(page_title="Battery Elements Explorer", layout="wide")
 st.title("🔬 Battery Elements Explorer")
 
 # --- Sidebar ---
 st.sidebar.title("⚡ Explore Elements")
-element = st.sidebar.selectbox("Choose Element", ["Lithium (Li)", "Lead (Pb)"])
+element = st.sidebar.selectbox("Select Element", ["Lithium (Li)", "Lead (Pb)"])
 page = st.sidebar.radio("Navigate", ["⚛️ Atomic Model", "📊 Physical Properties", "☢️ Nuclear & E-Waste"])
 
 # --- Element Data ---
@@ -49,15 +50,15 @@ data = element_data[element]
 if page == "⚛️ Atomic Model":
     st.subheader(f"⚛️ 3D Animated Atomic Model of {element}")
     st.markdown(f"**Discharge Formula:** `{data['formula']}`")
-    
+
     shells = data['electrons']
-    radii = np.linspace(10, 30, len(shells))
-    
-    # --- Build frames for animation ---
+    radii = np.linspace(10, 30, len(shells))  # radius per shell
+    n_frames = 60  # number of animation frames
     frames = []
-    angles = np.linspace(0, 2*np.pi, 50)
-    
-    for a in angles:
+
+    # --- Build animation frames ---
+    angles = np.linspace(0, 2*np.pi, n_frames)
+    for t in angles:
         frame_data = []
         # Nucleus
         frame_data.append(go.Scatter3d(
@@ -78,33 +79,45 @@ if page == "⚛️ Atomic Model":
         ))
         # Electrons
         for i, num in enumerate(shells):
-            angles_e = np.linspace(0, 2*np.pi, num, endpoint=False) + a*(i+1)
-            x = radii[i]*np.cos(angles_e)
-            y = radii[i]*np.sin(angles_e)*np.cos(a)  # slight tilt for 3D orbit
-            z = radii[i]*np.sin(angles_e)*np.sin(a)
+            x = []
+            y = []
+            z = []
+            tilt = np.pi/8*(i+1)  # tilt per shell for 3D effect
+            for j in range(num):
+                angle = t + j*2*np.pi/num
+                x.append(radii[i]*np.cos(angle))
+                y.append(radii[i]*np.sin(angle)*np.cos(tilt))
+                z.append(radii[i]*np.sin(angle)*np.sin(tilt))
             frame_data.append(go.Scatter3d(
-                x=x, y=y, z=z, mode='markers', marker=dict(size=4, color='yellow'), name=f'Shell {i+1}'
+                x=x, y=y, z=z,
+                mode='markers',
+                marker=dict(size=4, color='yellow'),
+                name=f'Shell {i+1}'
             ))
         frames.append(go.Frame(data=frame_data))
-    
+
     fig = go.Figure(
         data=frames[0].data,
         frames=frames
     )
-    
+
     fig.update_layout(
-        updatemenus=[dict(type="buttons",
-                          buttons=[dict(label="Play",
-                                        method="animate",
-                                        args=[None, {"frame": {"duration": 100, "redraw": True}, 
-                                                     "fromcurrent": True, "transition": {"duration": 0}}])],
-                          showactive=True)],
-        scene=dict(xaxis=dict(showbackground=False, visible=False),
-                   yaxis=dict(showbackground=False, visible=False),
-                   zaxis=dict(showbackground=False, visible=False)),
+        updatemenus=[dict(
+            type="buttons",
+            buttons=[dict(label="Play",
+                          method="animate",
+                          args=[None, {"frame": {"duration": 80, "redraw": True},
+                                       "fromcurrent": True, "transition": {"duration": 0}}])],
+            showactive=True
+        )],
+        scene=dict(
+            xaxis=dict(showbackground=False, visible=False),
+            yaxis=dict(showbackground=False, visible=False),
+            zaxis=dict(showbackground=False, visible=False)
+        ),
         margin=dict(l=0, r=0, t=0, b=0)
     )
-    
+
     st.plotly_chart(fig, use_container_width=True)
 
 # --- Page 2: Physical Properties ---
