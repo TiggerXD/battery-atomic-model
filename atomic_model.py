@@ -1,9 +1,9 @@
 import streamlit as st
-import pandas as pd
 import plotly.graph_objects as go
 import numpy as np
+import pandas as pd
 
-st.set_page_config(layout="wide")
+st.set_page_config(layout="wide", page_title="Battery Elements Explorer")
 st.title("🔬 Battery Elements Explorer")
 
 # --- Sidebar ---
@@ -47,13 +47,13 @@ data = element_data[element]
 
 # --- Page 1: Atomic Model ---
 if page == "⚛️ Atomic Model":
-    st.subheader(f"⚛️ 3D Animated Atomic Model of {element}")
+    st.subheader(f"⚛️ 3D Atomic Model of {element}")
     st.markdown(f"**Discharge Formula:** `{data['formula']}`")
     
-    # --- Plotly Animated Atomic Model ---
     shells = data['electrons']
     radii = np.linspace(10, 30, len(shells))
     
+    # --- Build frames for animation ---
     frames = []
     angles = np.linspace(0, 2*np.pi, 50)
     
@@ -83,7 +83,10 @@ if page == "⚛️ Atomic Model":
             y = radii[i]*np.sin(angles_e)
             z = np.zeros_like(x)
             frame_data.append(go.Scatter3d(
-                x=x, y=y, z=z, mode='markers', marker=dict(size=4, color='yellow'), name=f'Shell {i+1}'
+                x=x, y=y, z=z,
+                mode='markers',
+                marker=dict(size=4, color='yellow'),
+                name=f'Shell {i+1}'
             ))
         frames.append(go.Frame(data=frame_data))
     
@@ -96,7 +99,8 @@ if page == "⚛️ Atomic Model":
         updatemenus=[dict(type="buttons",
                           buttons=[dict(label="Play",
                                         method="animate",
-                                        args=[None, {"frame": {"duration": 100, "redraw": True}, "fromcurrent": True, "transition": {"duration": 0}}])],
+                                        args=[None, {"frame": {"duration": 100, "redraw": True}, 
+                                                     "fromcurrent": True, "transition": {"duration": 0}}])],
                           showactive=True)],
         scene=dict(xaxis=dict(showbackground=False, visible=False),
                    yaxis=dict(showbackground=False, visible=False),
@@ -109,14 +113,12 @@ if page == "⚛️ Atomic Model":
 # --- Page 2: Physical Properties ---
 elif page == "📊 Physical Properties":
     st.subheader(f"📊 Physical Properties of {element}")
-    
     properties = {
         "Property": ["Boiling Point", "Melting Point", "Heat Capacity", "Electrical Conductivity",
                      "Periodic Table Group", "Protons", "Neutrons", "Electrons"],
         element: [data['boiling'], data['melting'], data['heat_capacity'], data['conductivity'],
                   data['group'], data['protons'], data['neutrons'], sum(shells)]
     }
-    
     df = pd.DataFrame(properties)
     st.table(df)
 
