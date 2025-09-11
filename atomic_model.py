@@ -38,6 +38,7 @@ st.markdown(
         font-weight: bold;
         color: #084298;
     }
+    /* Sidebar fix */
     section[data-testid="stSidebar"] {
         background-color: #e9ecef !important;
         color: #212529 !important;
@@ -59,7 +60,6 @@ atom_choice = st.sidebar.selectbox("⚛️ Select an element:", ["Lithium (Li)",
 # ---------------- ELEMENT DATA ----------------
 element_data = {
     "Lithium (Li)": {
-        "gif_url": "https://raw.githubusercontent.com/YOURUSERNAME/YOURREPO/main/lithium.gif",
         "atomic_number": 3,
         "category": "Alkali Metal",
         "formula": "LiC₆ + CoO₂ → C₆ + LiCoO₂",
@@ -70,10 +70,10 @@ element_data = {
         "periodic_position": "Group 1 (Alkali Metal)",
         "protons": 3,
         "neutrons": 4,
-        "electrons": 3
+        "electrons": 3,
+        "iframe": "https://phet.colorado.edu/sims/html/build-an-atom/latest/build-an-atom_en.html"
     },
     "Lead (Pb)": {
-        "gif_url": "https://raw.githubusercontent.com/YOURUSERNAME/YOURREPO/main/lead.gif",
         "atomic_number": 82,
         "category": "Post-Transition Metal",
         "formula": "Pb + PbO₂ + 2H₂SO₄ → 2PbSO₄ + 2H₂O",
@@ -84,7 +84,8 @@ element_data = {
         "periodic_position": "Group 14 (Post-Transition Metal)",
         "protons": 82,
         "neutrons": 125,
-        "electrons": 82
+        "electrons": 82,
+        "iframe": "https://phet.colorado.edu/sims/html/build-an-atom/latest/build-an-atom_en.html"
     }
 }
 
@@ -99,17 +100,22 @@ if page == "🏠 Home":
         """
     )
 
-    data = element_data[atom_choice]
-
     st.markdown(f"### 🔹 {atom_choice}")
-    st.image(data["gif_url"], width=400)  # Lowered GIF scale
-    formula_class = "highlight-li" if atom_choice == "Lithium (Li)" else "highlight-pb"
-    st.markdown(f"**Chemical Formula:** <span class='{formula_class}'>{data['formula']}</span>", unsafe_allow_html=True)
     
+    # Embed Phet interactive model
+    st.components.v1.html(
+        f"""<iframe src="{element_data[atom_choice]['iframe']}" 
+        width="800" height="600" scrolling="no" allowfullscreen></iframe>""",
+        height=620,
+    )
+
+    formula_class = "highlight-li" if atom_choice == "Lithium (Li)" else "highlight-pb"
+    st.markdown(f"**Chemical Formula:** <span class='{formula_class}'>{element_data[atom_choice]['formula']}</span>", unsafe_allow_html=True)
+
     st.write(
         f"""
-        - **Atomic Number:** {data['atomic_number']}  
-        - **Category:** {data['category']}  
+        - **Atomic Number:** {element_data[atom_choice]['atomic_number']}  
+        - **Category:** {element_data[atom_choice]['category']}  
         - This atomic model helps you visualize the **protons**, **neutrons**, and **electrons** in the nucleus and shells.
         """
     )
