@@ -25,7 +25,8 @@ element_data = {
         "nuclear_symbol": "Li",
         "atomic_number": 3,
         "e_waste": "⚠️ Can leak toxic electrolytes; lithium mining consumes high water resources.",
-        "description": "Lithium is a soft, silvery metal used widely in rechargeable batteries. It's highly reactive and light, making it ideal for portable electronics."
+        "description": "Lithium is a soft, silvery metal used widely in rechargeable batteries. It's highly reactive and light, making it ideal for portable electronics.",
+        "embed": '<iframe src="https://phet.colorado.edu/sims/html/build-an-atom/latest/build-an-atom_en.html" width="800" height="600" scrolling="no" allowfullscreen></iframe>'
     },
     "Lead (Pb)": {
         "formula": "Pb + PbO2 + 2H2SO4 → 2PbSO4 + 2H2O",
@@ -40,7 +41,8 @@ element_data = {
         "nuclear_symbol": "Pb",
         "atomic_number": 82,
         "e_waste": "☣️ Highly toxic; lead from batteries can contaminate soil and water if not recycled properly.",
-        "description": "Lead is a heavy metal with low melting point, used mainly in lead-acid batteries. It is toxic but recyclable."
+        "description": "Lead is a heavy metal with low melting point, used mainly in lead-acid batteries. It is toxic but recyclable.",
+        "embed": '<iframe src="https://phet.colorado.edu/sims/html/build-an-atom/latest/build-an-atom_en.html" width="800" height="600" scrolling="no" allowfullscreen></iframe>'
     }
 }
 
@@ -52,29 +54,8 @@ if page == "🧪 Atomic Model":
     st.markdown(f"<b style='color:#ffff00'>Discharge Formula:</b> <span style='color:#ffffff'>{data['formula']}</span>", unsafe_allow_html=True)
     st.markdown(f"<p style='color:#ffffff'>{data['description']}</p>", unsafe_allow_html=True)
 
-    # --- A-Frame 3D Model ---
-    aframe_html = f"""
-    <html>
-    <head>
-      <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    </head>
-    <body>
-      <a-scene background="color: #111111">
-        <!-- Nucleus: protons (blue) and neutrons (red) -->
-        {"".join([f'<a-sphere position="{x} {y} {z}" radius="0.3" color="blue"></a-sphere>' for x,y,z in [(0,0,0)]*data['protons']])}
-        {"".join([f'<a-sphere position="{x} {y} {z}" radius="0.3" color="red"></a-sphere>' for x,y,z in [(0,0,0)]*data['neutrons']])}
-        
-        <!-- Electron Orbits -->
-        <a-entity rotation="0 0 0" animation="property: rotation; to: 0 360 0; loop: true; dur: 6000">
-        {"".join([f'<a-sphere position="{radius} 0 0" radius="0.15" color="yellow" animation="property: position; to: {-radius} 0 0; dir: alternate; loop: true; dur: 2500"></a-sphere>' for radius in range(1, len(data['electrons'])+1)])}
-        </a-entity>
-        
-        <a-camera position="0 0 10"></a-camera>
-      </a-scene>
-    </body>
-    </html>
-    """
-    st.components.v1.html(aframe_html, height=600, scrolling=True)
+    # Embed interactive simulation
+    st.components.v1.html(data['embed'], height=650, scrolling=True)
 
 # --- Page 2: Physical Properties ---
 elif page == "📊 Physical Properties":
