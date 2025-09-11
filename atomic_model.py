@@ -84,37 +84,53 @@ div[data-baseweb="radio"] label:hover {
 
 # --- Sidebar Navigation ---
 st.sidebar.title("🔬 Battery Elements Explorer")
+element = st.sidebar.selectbox("Select Element", ["Lithium (Li)", "Lead (Pb)"])
 page = st.sidebar.radio("Navigate", 
-                        ["⚛️ Atomic Models", 
-                         "📊 Physical Properties", 
-                         "☢️ Nuclear Info & E-Waste"])
+                        ["⚛️ Atomic Model", "📊 Physical Properties", "☢️ Nuclear Info & E-Waste"])
 
-# --- Page 1: Atomic Models ---
-if page == "⚛️ Atomic Models":
-    st.title("⚛️ Atomic Models of Lithium & Lead")
-    st.markdown("Explore the **3D models** of "
-                "<span class='highlight-blue'>Lithium</span> and "
-                "<span class='highlight-blue'>Lead</span> atoms, "
-                "and their role in **battery chemistry** 🔋.",
-                unsafe_allow_html=True)
+# --- Element Data ---
+element_data = {
+    "Lithium (Li)": {
+        "formula": "LiC6 + CoO2 → C6 + LiCoO2",
+        "model": "https://sketchfab.com/models/163af8fd340c4b68b50f0bbe5317af97/embed",
+        "boiling": "1342",
+        "melting": "180.5",
+        "heat_capacity": "3.58",
+        "conductivity": "<span class='good'>✅ Good conductor</span>",
+        "group": "Alkali Metal (Group 1)",
+        "protons": "3",
+        "neutrons": "4",
+        "electrons": "3",
+        "nuclear_symbol": "Li",
+        "atomic_number": "3",
+        "e_waste": "⚠️ Can leak toxic electrolytes, high water usage in mining."
+    },
+    "Lead (Pb)": {
+        "formula": "Pb + PbO2 + 2H2SO4 → 2PbSO4 + 2H2O",
+        "model": "https://sketchfab.com/models/9e44979216c748beb9abe9536f7fdbbd/embed",
+        "boiling": "1749",
+        "melting": "327.5",
+        "heat_capacity": "0.13",
+        "conductivity": "<span class='bad'>⚠️ Poor conductor</span>",
+        "group": "Post-Transition Metal (Group 14)",
+        "protons": "82",
+        "neutrons": "125",
+        "electrons": "82",
+        "nuclear_symbol": "Pb",
+        "atomic_number": "82",
+        "e_waste": "☣️ Highly toxic, unsafe recycling pollutes soil & water."
+    }
+}
 
-    st.subheader("Lithium (Li) – Discharging Formula")
-    st.markdown("`LiC6 + CoO2 → C6 + LiCoO2`")
-    st.components.v1.iframe("https://sketchfab.com/models/163af8fd340c4b68b50f0bbe5317af97/embed", 
-                             height=400)
-
-    st.subheader("Lead (Pb) – Discharging Formula")
-    st.markdown("`Pb + PbO2 + 2H2SO4 → 2PbSO4 + 2H2O`")
-    st.components.v1.iframe("https://sketchfab.com/models/9e44979216c748beb9abe9536f7fdbbd/embed", 
-                             height=400)
+# --- Page 1: Atomic Model ---
+if page == "⚛️ Atomic Model":
+    st.title(f"⚛️ Atomic Model of {element}")
+    st.markdown(f"Discharge formula: `{element_data[element]['formula']}`")
+    st.components.v1.iframe(element_data[element]["model"], height=500)
 
 # --- Page 2: Physical Properties ---
 elif page == "📊 Physical Properties":
-    st.title("📊 Physical Properties of Lithium & Lead")
-    st.write("Here’s a comparison of important physical properties of "
-             "<span class='highlight-blue'>Lithium (Li)</span> "
-             "and <span class='highlight-blue'>Lead (Pb)</span>.",
-             unsafe_allow_html=True)
+    st.title(f"📊 Physical Properties of {element}")
 
     data = {
         "Property": [
@@ -127,39 +143,29 @@ elif page == "📊 Physical Properties":
             "➖ Neutrons",
             "🟢 Electrons"
         ],
-        "Lithium (Li)": [
-            "1342", "180.5", "3.58", "<span class='good'>✅ Good conductor</span>", 
-            "Alkali Metal (Group 1)", "3", "4", "3"
-        ],
-        "Lead (Pb)": [
-            "1749", "327.5", "0.13", "<span class='bad'>⚠️ Poor conductor</span>", 
-            "Post-Transition Metal (Group 14)", "82", "125", "82"
+        element: [
+            element_data[element]["boiling"],
+            element_data[element]["melting"],
+            element_data[element]["heat_capacity"],
+            element_data[element]["conductivity"],
+            element_data[element]["group"],
+            element_data[element]["protons"],
+            element_data[element]["neutrons"],
+            element_data[element]["electrons"]
         ]
     }
 
     df = pd.DataFrame(data)
     st.markdown(df.to_html(index=False, escape=False, classes="styled-table"), unsafe_allow_html=True)
 
-# --- Page 3: Nuclear Info & E-Waste ---
+# --- Page 3: Nuclear & E-Waste ---
 elif page == "☢️ Nuclear Info & E-Waste":
-    st.title("☢️ Nuclear Info & Environmental Impact")
-    st.markdown("Both Lithium and Lead have **nuclear symbols** and "
-                "play critical roles in **battery technology**. "
-                "But battery disposal creates **electronic waste (e-waste)** 🌍.", 
-                unsafe_allow_html=True)
+    st.title(f"☢️ Nuclear Info & E-Waste Effects of {element}")
 
     st.subheader("🧪 Nuclear Information")
-    st.markdown("""
-    - Lithium: Symbol = **Li**, Atomic Number = **3**
-    - Lead: Symbol = **Pb**, Atomic Number = **82**
-    """)
+    st.markdown(f"- Symbol: **{element_data[element]['nuclear_symbol']}**\n"
+                f"- Atomic Number: **{element_data[element]['atomic_number']}**")
 
     st.subheader("♻️ Effects of Electronic Waste")
-    st.markdown("""
-    - ⚠️ **Soil & Water Contamination** from heavy metals.  
-    - 🧍 **Health Risks**: Lead exposure damages the nervous system.  
-    - 🌍 **Environmental Damage**: Improper disposal harms ecosystems.  
-    - 💡 **Solution**: Recycling batteries reduces pollution and saves resources.  
-    """)
-
-    st.success("✅ Always recycle batteries responsibly to protect the environment!")
+    st.markdown(f"- {element_data[element]['e_waste']}")
+    st.success("✅ Always recycle batteries responsibly!")
