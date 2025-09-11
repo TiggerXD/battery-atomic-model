@@ -1,106 +1,114 @@
 import streamlit as st
-import streamlit.components.v1 as components
 import pandas as pd
 
-# ---------------- CONFIG ----------------
-st.set_page_config(
-    page_title="Battery Elements Explorer",
-    page_icon="🔋",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
-
-# ---------------- CUSTOM STYLING ----------------
+# --- Custom CSS for global styling ---
 st.markdown("""
-    <style>
-    /* Global background */
-    .stApp {
-        background: linear-gradient(135deg, #f0f9ff, #dbeafe, #bfdbfe);
-        font-family: 'Segoe UI', sans-serif;
-        color: #1e293b; /* dark navy for main text */
-    }
-    /* Sidebar styling */
-    section[data-testid="stSidebar"] {
-        background: #1e3a8a;
-        color: white;
-    }
-    section[data-testid="stSidebar"] .stRadio > label {
-        color: white;
-        font-weight: 600;
-    }
-    section[data-testid="stSidebar"] h1, h2, h3 {
-        color: white;
-    }
-    /* Titles */
-    h1 {
-        color: #0f172a;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.15);
-    }
-    h2, h3 {
-        color: #1e3a8a;
-    }
-    /* Highlight classes */
-    .highlight-green {background:#dcfce7; padding:6px 10px; border-radius:6px; color:#166534; font-weight:600;}
-    .highlight-red {background:#fee2e2; padding:6px 10px; border-radius:6px; color:#991b1b; font-weight:600;}
-    .highlight-yellow {background:#fef9c3; padding:6px 10px; border-radius:6px; color:#854d0e; font-weight:600;}
-    .highlight-blue {background:#dbeafe; padding:6px 10px; border-radius:6px; color:#1e3a8a; font-weight:600;}
-    /* Tables */
-    .stTable {
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
-    }
-    /* Formula cards */
-    .formula-card {
-        padding:10px;
-        background:#f0f9ff;
-        border-radius:10px;
-        box-shadow:0px 3px 8px rgba(0,0,0,0.1);
-        font-size:1.15rem;
-        font-weight:600;
-        color:#0f172a;
-    }
-    </style>
+<style>
+/* Sidebar styling */
+section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #1e3a8a, #3b82f6);
+    padding: 20px;
+}
+section[data-testid="stSidebar"] h1, 
+section[data-testid="stSidebar"] h2, 
+section[data-testid="stSidebar"] h3, 
+section[data-testid="stSidebar"] p {
+    color: white !important;
+}
+/* Sidebar buttons */
+div[data-baseweb="radio"] label {
+    background: white;
+    color: #1e3a8a;
+    border-radius: 10px;
+    padding: 10px 15px;
+    margin: 5px 0;
+    font-weight: bold;
+    transition: 0.3s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+div[data-baseweb="radio"] label:hover {
+    background: #93c5fd;
+    color: #111827;
+    cursor: pointer;
+}
+/* Highlight styles */
+.highlight-blue {
+    background: #dbeafe;
+    color: #1e3a8a;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+.good {
+    background: #dcfce7;
+    color: #166534;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+.bad {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+/* Table styling */
+.styled-table {
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 1rem;
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+.styled-table th {
+    background: #1e3a8a;
+    color: white;
+    text-align: center;
+    padding: 12px;
+}
+.styled-table td {
+    background: #f0f9ff;
+    text-align: center;
+    padding: 10px;
+    color: #0f172a;
+    font-weight: 500;
+}
+.styled-table tr:nth-child(even) td {
+    background: #dbeafe;
+}
+</style>
 """, unsafe_allow_html=True)
 
-# ---------------- SIDEBAR ----------------
-st.sidebar.title("🔍 Navigation")
-page = st.sidebar.radio(
-    "Go to:",
-    ["⚛️ Atomic Models", "📊 Physical Properties", "☢️ Nuclear & E-Waste Effects"]
-)
+# --- Sidebar Navigation ---
+st.sidebar.title("🔬 Battery Elements Explorer")
+page = st.sidebar.radio("Navigate", 
+                        ["⚛️ Atomic Models", 
+                         "📊 Physical Properties", 
+                         "☢️ Nuclear Info & E-Waste"])
 
-# ---------------- PAGE 1: Atomic Models ----------------
+# --- Page 1: Atomic Models ---
 if page == "⚛️ Atomic Models":
-    st.title("⚛️ Atomic Models of Battery Elements")
+    st.title("⚛️ Atomic Models of Lithium & Lead")
+    st.markdown("Explore the **3D models** of "
+                "<span class='highlight-blue'>Lithium</span> and "
+                "<span class='highlight-blue'>Lead</span> atoms, "
+                "and their role in **battery chemistry** 🔋.",
+                unsafe_allow_html=True)
 
-    st.write("Explore the **3D atomic structures** of "
-             "<span class='highlight-blue'>Lithium</span> and "
-             "<span class='highlight-blue'>Lead</span>, "
-             "two essential elements in electronic batteries. "
-             "🔄 Rotate, zoom, and inspect the atoms interactively!",
-             unsafe_allow_html=True)
+    st.subheader("Lithium (Li) – Discharging Formula")
+    st.markdown("`LiC6 + CoO2 → C6 + LiCoO2`")
+    st.components.v1.iframe("https://sketchfab.com/models/163af8fd340c4b68b50f0bbe5317af97/embed", 
+                             height=400)
 
-    elements = {
-        "Lithium": {
-            "embed": "https://sketchfab.com/models/163af8fd340c4b68b50f0bbe5317af97/embed",
-            "formula": "LiC₆ + CoO₂ → C₆ + LiCoO₂"
-        },
-        "Lead": {
-            "embed": "https://sketchfab.com/models/9e44979216c748beb9abe9536f7fdbbd/embed",
-            "formula": "Pb + PbO₂ + 2H₂SO₄ → 2PbSO₄ + 2H₂O"
-        }
-    }
+    st.subheader("Lead (Pb) – Discharging Formula")
+    st.markdown("`Pb + PbO2 + 2H2SO4 → 2PbSO4 + 2H2O`")
+    st.components.v1.iframe("https://sketchfab.com/models/9e44979216c748beb9abe9536f7fdbbd/embed", 
+                             height=400)
 
-    choice = st.selectbox("🔎 Choose an element:", list(elements.keys()))
-
-    st.subheader(f"⚗️ Discharge Formula for {choice}")
-    st.markdown(f"<div class='formula-card'>🔋 {elements[choice]['formula']}</div>", unsafe_allow_html=True)
-
-    st.subheader(f"🧩 3D Atomic Model of {choice}")
-    components.iframe(elements[choice]["embed"], height=600)
-
-# ---------------- PAGE 2: Physical Properties ----------------
+# --- Page 2: Physical Properties ---
 elif page == "📊 Physical Properties":
     st.title("📊 Physical Properties of Lithium & Lead")
     st.write("Here’s a comparison of important physical properties of "
@@ -120,37 +128,38 @@ elif page == "📊 Physical Properties":
             "🟢 Electrons"
         ],
         "Lithium (Li)": [
-            "1342", "180.5", "3.58", "✅ Good conductor", "Alkali Metal (Group 1)", "3", "4", "3"
+            "1342", "180.5", "3.58", "<span class='good'>✅ Good conductor</span>", 
+            "Alkali Metal (Group 1)", "3", "4", "3"
         ],
         "Lead (Pb)": [
-            "1749", "327.5", "0.13", "⚠️ Poor conductor", "Post-Transition Metal (Group 14)", "82", "125", "82"
+            "1749", "327.5", "0.13", "<span class='bad'>⚠️ Poor conductor</span>", 
+            "Post-Transition Metal (Group 14)", "82", "125", "82"
         ]
     }
 
     df = pd.DataFrame(data)
-    st.table(df)
+    st.markdown(df.to_html(index=False, escape=False, classes="styled-table"), unsafe_allow_html=True)
 
-# ---------------- PAGE 3: Nuclear & E-Waste ----------------
-elif page == "☢️ Nuclear & E-Waste Effects":
-    st.title("☢️ Nuclear Significance & E-Waste Effects")
-    st.write("""
-    ### ⚛️ Nuclear Significance
-    - <span class='highlight-blue'>Lithium (Li)</span>: Used in **fusion research** and **nuclear technology** as a coolant and tritium source.  
-    - <span class='highlight-blue'>Lead (Pb)</span>: Used as **radiation shielding** due to its high density.  
+# --- Page 3: Nuclear Info & E-Waste ---
+elif page == "☢️ Nuclear Info & E-Waste":
+    st.title("☢️ Nuclear Info & Environmental Impact")
+    st.markdown("Both Lithium and Lead have **nuclear symbols** and "
+                "play critical roles in **battery technology**. "
+                "But battery disposal creates **electronic waste (e-waste)** 🌍.", 
+                unsafe_allow_html=True)
 
-    ### ♻️ Electronic Waste Concerns
-    - <span class='highlight-yellow'>Lithium Batteries</span>:  
-      🔋 Can leak **toxic electrolytes** and heavy metals if not disposed properly.  
-      🌍 Mining lithium harms ecosystems and uses **huge water resources**.  
+    st.subheader("🧪 Nuclear Information")
+    st.markdown("""
+    - Lithium: Symbol = **Li**, Atomic Number = **3**
+    - Lead: Symbol = **Pb**, Atomic Number = **82**
+    """)
 
-    - <span class='highlight-red'>Lead Batteries</span>:  
-      ☣️ Lead is **highly toxic**, damaging the brain, kidneys, and nervous system.  
-      🚯 Lead-acid batteries are the **most recycled** consumer product, but unsafe recycling still causes pollution.  
+    st.subheader("♻️ Effects of Electronic Waste")
+    st.markdown("""
+    - ⚠️ **Soil & Water Contamination** from heavy metals.  
+    - 🧍 **Health Risks**: Lead exposure damages the nervous system.  
+    - 🌍 **Environmental Damage**: Improper disposal harms ecosystems.  
+    - 💡 **Solution**: Recycling batteries reduces pollution and saves resources.  
+    """)
 
-    ### ✅ Safer Practices
-    - Encourage **recycling** through official programs.  
-    - Reduce use of **toxic materials** in future battery designs.  
-    - Explore **eco-friendly alternatives** (e.g., sodium-ion batteries).
-    """, unsafe_allow_html=True)
-
-    st.success("⚡ Knowledge is power — let's use it to build safer and greener batteries!")
+    st.success("✅ Always recycle batteries responsibly to protect the environment!")
