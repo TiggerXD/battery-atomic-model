@@ -1,6 +1,4 @@
 import streamlit as st
-import plotly.graph_objects as go
-import numpy as np
 import pandas as pd
 
 # --- Page Config ---
@@ -35,102 +33,47 @@ page = st.sidebar.radio("Navigate", ["⚛️ Atomic Model", "📊 Physical Prope
 element_data = {
     "Lithium (Li)": {
         "formula": "LiC6 + CoO2 → C6 + LiCoO2",
-        "protons": 3,
-        "neutrons": 4,
-        "electrons": [2, 1],
         "boiling": "1342°C",
         "melting": "180.5°C",
         "heat_capacity": "3.58 J/g·K",
         "conductivity": "✅ Good conductor",
         "group": "Alkali Metal (Group 1)",
+        "protons": 3,
+        "neutrons": 4,
+        "electrons": 3,
         "nuclear_symbol": "Li",
         "atomic_number": 3,
-        "e_waste": "⚠️ Can leak toxic electrolytes, high water usage in mining."
+        "e_waste": "⚠️ Can leak toxic electrolytes, high water usage in mining.",
+        "sketchfab_embed": "https://sketchfab.com/models/163af8fd340c4b68b50f0bbe5317af97/embed"
     },
     "Lead (Pb)": {
         "formula": "Pb + PbO2 + 2H2SO4 → 2PbSO4 + 2H2O",
-        "protons": 82,
-        "neutrons": 125,
-        "electrons": [2, 8, 18, 32, 18, 4],
         "boiling": "1749°C",
         "melting": "327.5°C",
         "heat_capacity": "0.13 J/g·K",
         "conductivity": "⚠️ Poor conductor",
         "group": "Post-Transition Metal (Group 14)",
+        "protons": 82,
+        "neutrons": 125,
+        "electrons": 82,
         "nuclear_symbol": "Pb",
         "atomic_number": 82,
-        "e_waste": "☣️ Highly toxic, unsafe recycling pollutes soil & water."
+        "e_waste": "☣️ Highly toxic, unsafe recycling pollutes soil & water.",
+        "sketchfab_embed": "https://sketchfab.com/models/9e44979216c748beb9abe9536f7fdbbd/embed"
     }
 }
 data = element_data[element]
 
-# --- Page 1: Atomic Model ---
+# --- Page 1: Atomic Model (Embedded) ---
 if page == "⚛️ Atomic Model":
-    st.markdown(f"<h2 style='color:#00ff00'>⚛️ Atomic Model of {element}</h2>", unsafe_allow_html=True)
+    st.markdown(f"<h2 style='color:#00ff00'>⚛️ 3D Model of {element}</h2>", unsafe_allow_html=True)
     st.markdown(f"<b style='color:#ffff00'>Discharge Formula:</b> <span style='color:#ffffff'>{data['formula']}</span>", unsafe_allow_html=True)
-
-    shells = data['electrons']
-    radii = np.linspace(10, 30, len(shells))
-    n_frames = 60
-    frames = []
-
-    angles = np.linspace(0, 2*np.pi, n_frames)
-    for t in angles:
-        frame_data = []
-        # Nucleus
-        frame_data.append(go.Scatter3d(
-            x=[0]*data['protons'], y=[0]*data['protons'], z=[0]*data['protons'],
-            mode='markers', marker=dict(size=8,color='red',opacity=0.9), name='Protons'
-        ))
-        frame_data.append(go.Scatter3d(
-            x=[0]*data['neutrons'], y=[0]*data['neutrons'], z=[0]*data['neutrons'],
-            mode='markers', marker=dict(size=8,color='blue',opacity=0.9), name='Neutrons'
-        ))
-        # Electrons
-        for i, num in enumerate(shells):
-            x, y, z = [], [], []
-            tilt = np.pi/8*(i+1)
-            for j in range(num):
-                angle = t + j*2*np.pi/num
-                x.append(radii[i]*np.cos(angle))
-                y.append(radii[i]*np.sin(angle)*np.cos(tilt))
-                z.append(radii[i]*np.sin(angle)*np.sin(tilt))
-            # faint orbit lines
-            frame_data.append(go.Scatter3d(
-                x=x, y=y, z=z, mode='markers+lines',
-                line=dict(color='yellow', width=1, dash='dot'),
-                marker=dict(size=4,color='yellow'),
-                name=f'Shell {i+1}'
-            ))
-        frames.append(go.Frame(data=frame_data))
-
-    fig = go.Figure(
-        data=frames[0].data,
-        frames=frames
-    )
-
-    fig.update_layout(
-        paper_bgcolor="#111111",
-        plot_bgcolor="#111111",
-        font_color="#00ffff",
-        updatemenus=[dict(
-            type="buttons",
-            buttons=[dict(label="Play",
-                          method="animate",
-                          args=[None, {"frame":{"duration":80,"redraw":True},
-                                       "fromcurrent":True, "transition":{"duration":0}}])],
-            showactive=True
-        )],
-        scene=dict(
-            xaxis=dict(showbackground=False, visible=False),
-            yaxis=dict(showbackground=False, visible=False),
-            zaxis=dict(showbackground=False, visible=False),
-            bgcolor="#111111"
-        ),
-        margin=dict(l=0,r=0,t=0,b=0)
-    )
-
-    st.plotly_chart(fig, use_container_width=True)
+    
+    # Embed Sketchfab model
+    embed_code = f"""
+    <iframe title="{element} 3D Model" width="100%" height="500" src="{data['sketchfab_embed']}" frameborder="0" allowfullscreen allow="autoplay; fullscreen; xr-spatial-tracking"></iframe>
+    """
+    st.components.v1.html(embed_code, height=550)
 
 # --- Page 2: Physical Properties ---
 elif page == "📊 Physical Properties":
@@ -139,14 +82,13 @@ elif page == "📊 Physical Properties":
         "Property": ["Boiling Point", "Melting Point", "Heat Capacity", "Electrical Conductivity",
                      "Periodic Table Group", "Protons", "Neutrons", "Electrons"],
         element: [data['boiling'], data['melting'], data['heat_capacity'], data['conductivity'],
-                  data['group'], data['protons'], data['neutrons'], sum(shells)]
+                  data['group'], data['protons'], data['neutrons'], data['electrons']]
     }
     df = pd.DataFrame(properties)
     # Highlight important properties
     def highlight_props(x):
-        color = 'background-color: #222222; color:#00ffff'
         important = ['Boiling Point','Melting Point','Electrical Conductivity','Protons','Neutrons','Electrons']
-        return [f'background-color:#444444; color:#ffff00' if v in important else color for v in x]
+        return ['background-color:#444444; color:#ffff00' if v in important else 'background-color:#222222; color:#00ffff' for v in x]
     st.dataframe(df.style.apply(highlight_props, axis=0))
 
 # --- Page 3: Nuclear & E-Waste ---
