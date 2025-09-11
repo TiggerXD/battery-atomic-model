@@ -4,53 +4,50 @@ import streamlit as st
 st.set_page_config(page_title="Battery Elements Explorer", layout="wide")
 
 # ---------------- CSS ----------------
-st.markdown(
-    """
-    <style>
-    body {
-        background-color: #f5f7fa;
-        color: #222;
-        font-family: 'Segoe UI', sans-serif;
-    }
-    .main-title {
-        font-size: 40px;
-        font-weight: bold;
-        color: #0d6efd;
-        text-align: center;
-        padding: 20px;
-    }
-    .section-title {
-        font-size: 28px;
-        color: #198754;
-        margin-top: 30px;
-    }
-    .highlight-li {
-        background-color: #d1e7dd;
-        padding: 5px 10px;
-        border-radius: 8px;
-        font-weight: bold;
-        color: #0f5132;
-    }
-    .highlight-pb {
-        background-color: #cfe2ff;
-        padding: 5px 10px;
-        border-radius: 8px;
-        font-weight: bold;
-        color: #084298;
-    }
-    /* Sidebar fix */
-    section[data-testid="stSidebar"] {
-        background-color: #e9ecef !important;
-        color: #212529 !important;
-    }
-    section[data-testid="stSidebar"] * {
-        color: #212529 !important;
-        font-weight: 500;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+st.markdown("""
+<style>
+body {
+    background-color: #f5f7fa;
+    color: #222;
+    font-family: 'Segoe UI', sans-serif;
+}
+.main-title {
+    font-size: 40px;
+    font-weight: bold;
+    color: #0d6efd;
+    text-align: center;
+    padding: 20px;
+}
+.section-title {
+    font-size: 28px;
+    color: #198754;
+    margin-top: 30px;
+}
+.highlight-li {
+    background-color: #d1e7dd;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    color: #0f5132;
+}
+.highlight-pb {
+    background-color: #cfe2ff;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    color: #084298;
+}
+/* Sidebar fix */
+section[data-testid="stSidebar"] {
+    background-color: #e9ecef !important;
+    color: #212529 !important;
+}
+section[data-testid="stSidebar"] * {
+    color: #212529 !important;
+    font-weight: 500;
+}
+</style>
+""", unsafe_allow_html=True)
 
 # ---------------- SIDEBAR ----------------
 st.sidebar.title("🔬 Navigation")
@@ -71,7 +68,7 @@ element_data = {
         "protons": 3,
         "neutrons": 4,
         "electrons": 3,
-        "iframe": "https://phet.colorado.edu/sims/html/build-an-atom/latest/build-an-atom_en.html"
+        "gif": "lithium.gif"
     },
     "Lead (Pb)": {
         "atomic_number": 82,
@@ -85,7 +82,7 @@ element_data = {
         "protons": 82,
         "neutrons": 125,
         "electrons": 82,
-        "iframe": "https://phet.colorado.edu/sims/html/build-an-atom/latest/build-an-atom_en.html"
+        "gif": "lead.gif"
     }
 }
 
@@ -101,14 +98,10 @@ if page == "🏠 Home":
     )
 
     st.markdown(f"### 🔹 {atom_choice}")
-    
-    # Embed Phet interactive model
-    st.components.v1.html(
-        f"""<iframe src="{element_data[atom_choice]['iframe']}" 
-        width="800" height="600" scrolling="no" allowfullscreen></iframe>""",
-        height=620,
-    )
 
+    # Show GIF
+    st.image(element_data[atom_choice]["gif"], use_container_width=True)
+    
     formula_class = "highlight-li" if atom_choice == "Lithium (Li)" else "highlight-pb"
     st.markdown(f"**Chemical Formula:** <span class='{formula_class}'>{element_data[atom_choice]['formula']}</span>", unsafe_allow_html=True)
 
