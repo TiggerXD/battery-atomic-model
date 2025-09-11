@@ -1,81 +1,201 @@
 import streamlit as st
-import pandas as pd
 
-# --- Page Config ---
+# ---------------- CONFIG ----------------
 st.set_page_config(page_title="Battery Elements Explorer", layout="wide")
-st.markdown("<h1 style='text-align:center;color:#00ffff'>🔬 Battery Elements Explorer</h1>", unsafe_allow_html=True)
 
-# --- Sidebar ---
-st.sidebar.title("⚡ Explore Elements")
-element = st.sidebar.selectbox("Select Element", ["Lithium (Li)", "Lead (Pb)"])
-page = st.sidebar.radio("Navigate", ["🧪 Atomic Model", "📊 Physical Properties", "☢️ Nuclear & E-Waste"])
-
-# --- Element Data ---
-element_data = {
-    "Lithium (Li)": {
-        "formula": "LiC6 + CoO2 → C6 + LiCoO2",
-        "protons": 3,
-        "neutrons": 4,
-        "electrons": [2,1],
-        "boiling": "1342°C",
-        "melting": "180.5°C",
-        "heat_capacity": "3.58 J/g·K",
-        "conductivity": "✅ Good conductor",
-        "group": "Alkali Metal (Group 1)",
-        "nuclear_symbol": "Li",
-        "atomic_number": 3,
-        "e_waste": "⚠️ Can leak toxic electrolytes; lithium mining consumes high water resources.",
-        "description": "Lithium is a soft, silvery metal used widely in rechargeable batteries. It's highly reactive and light, making it ideal for portable electronics.",
-        "embed": '<iframe src="https://phet.colorado.edu/sims/html/build-an-atom/latest/build-an-atom_en.html" width="800" height="600" scrolling="no" allowfullscreen></iframe>'
-    },
-    "Lead (Pb)": {
-        "formula": "Pb + PbO2 + 2H2SO4 → 2PbSO4 + 2H2O",
-        "protons": 82,
-        "neutrons": 125,
-        "electrons": [2,8,18,32,18,4],
-        "boiling": "1749°C",
-        "melting": "327.5°C",
-        "heat_capacity": "0.13 J/g·K",
-        "conductivity": "⚠️ Poor conductor",
-        "group": "Post-Transition Metal (Group 14)",
-        "nuclear_symbol": "Pb",
-        "atomic_number": 82,
-        "e_waste": "☣️ Highly toxic; lead from batteries can contaminate soil and water if not recycled properly.",
-        "description": "Lead is a heavy metal with low melting point, used mainly in lead-acid batteries. It is toxic but recyclable.",
-        "embed": '<iframe src="https://phet.colorado.edu/sims/html/build-an-atom/latest/build-an-atom_en.html" width="800" height="600" scrolling="no" allowfullscreen></iframe>'
+# Custom CSS for appearance
+st.markdown(
+    """
+    <style>
+    body {
+        background-color: #f5f7fa;
+        color: #222;
+        font-family: 'Segoe UI', sans-serif;
     }
-}
+    .main-title {
+        font-size: 40px;
+        font-weight: bold;
+        color: #0d6efd;
+        text-align: center;
+        padding: 20px;
+    }
+    .section-title {
+        font-size: 28px;
+        color: #198754;
+        margin-top: 30px;
+    }
+    .highlight {
+        background-color: #fff3cd;
+        padding: 5px 10px;
+        border-radius: 8px;
+        font-weight: bold;
+    }
+    .stSidebar {
+        background-color: #e9ecef;
+        border-right: 2px solid #dee2e6;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
-data = element_data[element]
+# ---------------- SIDEBAR ----------------
+st.sidebar.title("🔬 Navigation")
+page = st.sidebar.radio("Go to:", ["🏠 Home", "📊 Physical Properties", "☢️ Nuclear & E-Waste Effects"])
 
-# --- Page 1: Atomic Model ---
-if page == "🧪 Atomic Model":
-    st.markdown(f"<h2 style='color:#00ff00'>🧪 Atomic Model of {element}</h2>", unsafe_allow_html=True)
-    st.markdown(f"<b style='color:#ffff00'>Discharge Formula:</b> <span style='color:#ffffff'>{data['formula']}</span>", unsafe_allow_html=True)
-    st.markdown(f"<p style='color:#ffffff'>{data['description']}</p>", unsafe_allow_html=True)
+if page == "🏠 Home":
+    st.sidebar.markdown("---")
+    atom_choice = st.sidebar.selectbox("⚛️ Select an element:", ["Lithium (Li)", "Lead (Pb)"])
 
-    # Embed interactive simulation
-    st.components.v1.html(data['embed'], height=650, scrolling=True)
 
-# --- Page 2: Physical Properties ---
+# ---------------- PAGE 1: HOME ----------------
+if page == "🏠 Home":
+    st.markdown('<div class="main-title">⚡ Atomic Models of Battery Elements ⚡</div>', unsafe_allow_html=True)
+
+    st.write(
+        """
+        Welcome to the **Battery Elements Explorer**! 🚀  
+        This interactive project focuses on two important elements in **battery technology**:  
+        
+        - 🔹 **Lithium (Li)** → The heart of modern **rechargeable lithium-ion batteries** used in smartphones, laptops, and electric vehicles.  
+        - 🔸 **Lead (Pb)** → A key component of **lead-acid batteries**, one of the oldest types of rechargeable batteries, still widely used in cars and backup systems.  
+
+        In this section, you can view **animated atomic models** showing:  
+        - 🟡 **Electrons** orbiting the nucleus in specific shells  
+        - 🔵 **Protons** and 🔴 **Neutrons** tightly packed in the nucleus  
+        
+        These simple atomic structures explain why these elements behave the way they do in **chemical reactions**.  
+        """
+    )
+
+    if atom_choice == "Lithium (Li)":
+        st.markdown('<div class="section-title">🔹 Lithium (Li)</div>', unsafe_allow_html=True)
+        st.image("lithium.gif", caption="Lithium Atom Model (Animated)", use_container_width=True)
+        st.markdown(
+            """
+            - **Atomic Number:** 3  
+            - **Category:** Alkali Metal (very reactive)  
+            - **Battery Role:** Stores and releases energy by moving between electrodes.  
+
+            **Discharge Reaction (Lithium-ion battery):**  
+            <span class='highlight'>LiC₆ + CoO₂ → C₆ + LiCoO₂</span>  
+
+            👉 Lithium atoms are lightweight and small, making them perfect for **high-energy density** batteries.  
+            """
+            , unsafe_allow_html=True
+        )
+
+    elif atom_choice == "Lead (Pb)":
+        st.markdown('<div class="section-title">🔸 Lead (Pb)</div>', unsafe_allow_html=True)
+        st.image("lead.gif", caption="Lead Atom Model (Animated)", use_container_width=True)
+        st.markdown(
+            """
+            - **Atomic Number:** 82  
+            - **Category:** Post-Transition Metal (dense and stable)  
+            - **Battery Role:** Reacts with lead dioxide and sulfuric acid to produce electricity.  
+
+            **Discharge Reaction (Lead-acid battery):**  
+            <span class='highlight'>Pb + PbO₂ + 2H₂SO₄ → 2PbSO₄ + 2H₂O</span>  
+
+            👉 Lead is heavy, but it’s cheap and reliable, which is why **lead-acid batteries** are still common in vehicles.  
+            """
+            , unsafe_allow_html=True
+        )
+
+
+# ---------------- PAGE 2: PHYSICAL PROPERTIES ----------------
 elif page == "📊 Physical Properties":
-    st.markdown(f"<h2 style='color:#00ff00'>📊 Physical Properties of {element}</h2>", unsafe_allow_html=True)
-    properties = {
-        "Property": ["Boiling Point", "Melting Point", "Heat Capacity", "Electrical Conductivity",
-                     "Periodic Table Group", "Protons", "Neutrons", "Electrons"],
-        "Value": [data['boiling'], data['melting'], data['heat_capacity'], data['conductivity'],
-                  data['group'], data['protons'], data['neutrons'], sum(data['electrons'])]
-    }
-    df = pd.DataFrame(properties)
-    st.dataframe(df.style.set_properties(**{'background-color':'#222222','color':'#00ffff','font-weight':'bold'})
-                 .applymap(lambda v: 'color: #ffff00' if isinstance(v,str) and any(x in v for x in ['Boiling','Melting','Electrical','Protons','Neutrons','Electrons']) else ''))
+    st.markdown('<div class="main-title">📊 Physical Properties Comparison</div>', unsafe_allow_html=True)
 
-    st.markdown(f"<p style='color:#ffffff'>{data['description']}</p>", unsafe_allow_html=True)
+    st.write(
+        """
+        The behavior of elements is strongly linked to their **physical properties**.  
+        Here’s a side-by-side look at **Lithium** and **Lead**.  
+        
+        - Lithium is light, soft, and reacts easily, which explains why it’s useful in **fast-charging batteries**.  
+        - Lead is heavy, dense, and less reactive, giving it stability and long-lasting performance in **car batteries**.  
+        """
+    )
 
-# --- Page 3: Nuclear & E-Waste ---
-elif page == "☢️ Nuclear & E-Waste":
-    st.markdown(f"<h2 style='color:#00ff00'>☢️ Nuclear & Environmental Impact of {element}</h2>", unsafe_allow_html=True)
-    st.markdown(f"<b style='color:#ffff00'>Symbol:</b> <span style='color:#ffffff'>{data['nuclear_symbol']}</span>", unsafe_allow_html=True)
-    st.markdown(f"<b style='color:#ffff00'>Atomic Number:</b> <span style='color:#ffffff'>{data['atomic_number']}</span>", unsafe_allow_html=True)
-    st.markdown(f"<b style='color:#ff3333'>E-Waste Effect:</b> <span style='color:#ffffff'>{data['e_waste']}</span>", unsafe_allow_html=True)
-    st.success("✅ Always recycle batteries responsibly!")
+    st.table({
+        "Property": [
+            "🌡️ Boiling Point (°C)", 
+            "🔥 Melting Point (°C)", 
+            "♨️ Thermal Conductivity (W/m·K)", 
+            "⚡ Electrical Conductivity (10^6 S/m)", 
+            "📍 Periodic Table Position", 
+            "🔵 Protons", 
+            "🔴 Neutrons (common isotope)", 
+            "🟡 Electrons"
+        ],
+        "Lithium (Li)": [
+            "1342", 
+            "180.5", 
+            "84.8", 
+            "10.6", 
+            "Alkali Metal (Group 1)", 
+            "3", 
+            "4", 
+            "3"
+        ],
+        "Lead (Pb)": [
+            "1749", 
+            "327.5", 
+            "35.3", 
+            "4.8", 
+            "Post-Transition Metal (Group 14)", 
+            "82", 
+            "125", 
+            "82"
+        ]
+    })
+
+    st.markdown(
+        """
+        **Key Insights:**  
+        - 🟢 Lithium’s **low melting point** and **high reactivity** make it great for **energy transfer**.  
+        - 🔵 Lead’s **high density** and **moderate conductivity** make it more stable but heavier, limiting portability.  
+        """
+    )
+
+
+# ---------------- PAGE 3: NUCLEAR & E-WASTE ----------------
+elif page == "☢️ Nuclear & E-Waste Effects":
+    st.markdown('<div class="main-title">☢️ Nuclear Symbols & Environmental Impact</div>', unsafe_allow_html=True)
+
+    st.subheader("⚛️ Nuclear Symbols")
+    st.markdown(
+        """
+        Every element can be represented by its **nuclear symbol**, which shows the number of **protons** and 
+        **nucleons (protons + neutrons)**.  
+
+        - Lithium → <span class="highlight">⁷₃Li</span>  
+        - Lead → <span class="highlight">²⁰⁷₈₂Pb</span>  
+
+        👉 These symbols are essential for **nuclear chemistry** and understanding isotopes.  
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.subheader("🗑️ Effects of Electronic Waste")
+    st.write(
+        """
+        Improper disposal of **used batteries** causes serious problems:  
+
+        - 🔹 **Lithium-ion batteries**  
+          - Can catch fire or explode if damaged 🔥  
+          - Lithium compounds are highly reactive ⚡  
+
+        - 🔸 **Lead-acid batteries**  
+          - Leak **toxic lead** and **sulfuric acid** ☣️  
+          - Contaminate soil and water 🌍  
+
+        ### Why Recycling Matters ♻️  
+        - Recovers **valuable metals** (Lithium, Lead, Cobalt)  
+        - Prevents **toxic pollution**  
+        - Reduces the need for harmful **mining activities**  
+        - Protects **human health** and **ecosystems** 🌱  
+
+        ✅ In conclusion: **Safe recycling = safer environment!**  
+        """
+    )
