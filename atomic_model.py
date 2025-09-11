@@ -6,6 +6,29 @@ st.set_page_config(page_title="Battery Elements Explorer", layout="wide")
 # ---------------- CSS ----------------
 st.markdown("""
 <style>
+/* Sidebar background and text */
+section[data-testid="stSidebar"] {
+    background-color: #e9ecef !important;
+    color: #212529 !important;
+}
+section[data-testid="stSidebar"] * {
+    color: #212529 !important;
+    font-weight: 500;
+}
+
+/* Make selectbox text dark */
+div[role="combobox"] > div > div > span {
+    color: #212529 !important;
+    font-weight: 500;
+}
+
+/* Hover effect for selectbox items */
+div[role="option"] {
+    color: #212529 !important;
+    background-color: #f8f9fa !important;
+}
+
+/* Main page styling */
 body {
     background-color: #f5f7fa;
     color: #222;
@@ -36,15 +59,6 @@ body {
     border-radius: 8px;
     font-weight: bold;
     color: #084298;
-}
-/* Sidebar fix */
-section[data-testid="stSidebar"] {
-    background-color: #e9ecef !important;
-    color: #212529 !important;
-}
-section[data-testid="stSidebar"] * {
-    color: #212529 !important;
-    font-weight: 500;
 }
 </style>
 """, unsafe_allow_html=True)
